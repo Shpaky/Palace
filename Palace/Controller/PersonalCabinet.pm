@@ -2,7 +2,6 @@
 
 	package Palace::Controller::PersonalCabinet;
 	use base 'Palace::Controller';
-	use File::Glob qw|bsd_glob|;
 	use FindBin qw|$Bin|;
 	use feature qw|state say|;
 
@@ -17,5 +16,24 @@
 
 	sub authorization
 	{
-		1;
+		my ( $self ) = @_;
+		
+		$self->tools(
+		[
+			'init_log',
+		]);
+
+		&init_log($self->config()->{'logs'});
+
+		$log->info('|'.$$.'|'.'Begin perform \'authorization\' route.');
+
+		$self->plugin();
+		
+		my $env = $self->env();
+
+		my $app_dir = $self->env()->{'env'}->{'PWD'};
+
+		
+		$log->info('|'.$$.'|'.'End perform \'authorization\' route.');
 	}
+	1;

@@ -21,7 +21,7 @@
 	use File::Path qw|make_path|;
 	use File::Glob qw(bsd_glob);
 	
-	$HPVF::Utils::EXPORT =
+	$HPVF::Tools::EXPORT =
 	{
 		'check_root_project' => 'subroutine',
 		'fetch_russian_name' => 'subroutine',

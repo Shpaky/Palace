@@ -90,11 +90,11 @@
 		$self->{'Utils'}->{$utils} ||= $self->{'Utils'}->new($utils);
 	
 		return $self->{'Utils'}->{$utils};
-	}		
+	}
 
 	sub tools
 	{
-		use Tools;
+	#	use Tools;
 		eval(__PACKAGE__.'::'.'Tools')->init_tools($_[0],$_[1]);
 	}
 

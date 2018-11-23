@@ -34,6 +34,10 @@
 				}
 				when('RSYNC') { $self->{$class}->utils(['get_line']) }
 				when('DB::MYSQL') { $self->{$class}->db_connect('mysql') }
+				when('HTTP::SERVER')
+				{
+					$self->{$class}->new($self->{$class}->protocol());
+				}
 			}
 
 			return $self->{$class};
