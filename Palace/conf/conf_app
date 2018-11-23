@@ -1,0 +1,46 @@
+$config = {
+	    'COMMON_SETTINGS' => '=========================',
+            'mode' => 'combat',
+            'logs' => 'Palace/conf/conf_log',
+	    'error_list' => 'HPVF/logs/error_list',
+
+	    'RE' => '......................................',
+	    're_uuid' => qr!([a-f0-9]{8}-([a-f0-9]{4}-){3}[a-f0-9]{12})$!,
+
+            'SERVERS_FOR_SYNC' => '========================',
+	    'syncserver' =>
+	    [
+		'10.0.0.80', '10.0.0.81', '10.0.1.70', '10.0.1.72'
+	    ],
+
+	    'OWNERS' => '==================================',
+	     owners =>
+	    [
+		'Dynamo','Djany','Shpaky'
+	    ],
+	    'DATABASE_SETTINGS' => '=======================',
+	    'db' =>
+	    {
+		'mysql' =>
+		{
+			'connect' =>
+			{
+				'dns' => 'dbi:mysql:vk:195.16.112.68',
+				'user' => 'root'
+			}
+		},
+		'sqlite' =>
+		{
+			'connect' =>
+			{
+				'pass' => '',
+				'dns' => 'dbi:SQLite:dbname=/home/potapov.k/tvzavr_upload/tvzavr_video_upload_prod.db',
+				'error' =>
+				{
+					'RaiseError' => 1
+                                },
+				'user' => ''
+			}
+		}
+	    }
+	};
