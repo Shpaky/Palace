@@ -34,9 +34,11 @@
 				}
 				when('RSYNC') { $self->{$class}->utils(['get_line']) }
 				when('DB::MYSQL') { $self->{$class}->db_connect('mysql') }
-				when('HTTP::SERVER')
+				when('HTTP::Server')
 				{
-					$self->{$class}->new($self->{$class}->protocol());
+					$self->{$class} = $self->runtime_require(__PACKAGE__.'::'.$self->{$class}->protocol())->new();						## everytime will invoke 'runtime_require' method 
+				##	$self->{$class}->{$self->{$class}->protocol()} ||= $self->runtime_require(__PACKAGE__.'::'.$self->{$class}->protocol())->new();
+				##	return $self->{$class}->{$self->{$class}->protocol()};
 				}
 			}
 
@@ -49,7 +51,7 @@
 	sub runtime_require
 	{
 		my ( $self, $pckgnm ) = @_;
-		
+
 		$pckgnm !~ /^[a-z0-9:_\-]+$/i and die 'Invalid package name', $pckgnm;
 
 		my $source_pckgnm = $pckgnm;

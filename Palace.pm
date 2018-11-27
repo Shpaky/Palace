@@ -2,7 +2,7 @@
 
 	package Palace;
 
-	use 5.12.0;
+	use 5.10.0;
 	use lib qw|Palace Palace/lib|;
 
 	state $s;
@@ -94,7 +94,7 @@
 
 	sub tools
 	{
-	#	use Tools;
+		use Tools;
 		eval(__PACKAGE__.'::'.'Tools')->init_tools($_[0],$_[1]);
 	}
 

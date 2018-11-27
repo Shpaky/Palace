@@ -2,11 +2,18 @@
 
 	package Palace::Plugin::HTTP;
 	use base 'Palace::Plugin';
-	use lib './HTTP';
-	use 5.12.0;
+	use 5.10.0;
 
 
-	sub test_http_common_for_http
+	sub protocol
+	{
+		my ( $self ) = @_;
+
+		ref($self).$self->env()->{'HTTP'};
+		return 'HTTP::Server';
+	}
+
+	sub test_http_common_http
 	{
 		say 'Commot method for HTTP';
 	}
