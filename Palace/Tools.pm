@@ -38,6 +38,7 @@
 		'locked_open' => 'subroutine',
 		'create_pipe' => 'subroutine',
 		'create_path' => 'subroutine',
+		'caller_info' => 'subroutine',
 		'encode_to_json' => 'subroutine',
 		'make_directory' => 'subroutine',
 		'eqq' => 'subroutine',
@@ -92,6 +93,13 @@
 		map { $HPVF::Tools::EXPORT->{$_} and local *myglob = eval('$'.__PACKAGE__.'::'.'{'.$_.'}'); *{$pack.'::'.$_} = *myglob } @{$_[1]};
 	}
 
+	sub caller_info
+	{
+		my $str;
+		$str = ''.join(':',(caller($_))[3,2]).'> '.$str for ( 1..$_[0] );
+
+		return $str;
+	}
 
 	sub create_path
 	{

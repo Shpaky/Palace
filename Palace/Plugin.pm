@@ -17,26 +17,11 @@
 
 			given ($class)
 			{
-				when('MP4SPLIT') { 1; }
-				when('FFMPEG')
-				{
-					$self->{$class}->utils(
-					[
-						'check_root_project',
-						'check_uuid_project',
-						'fetch_russian_name',
-						'eqq', 'create_pipe',
-						'get_lang','get_line',
-						'sig_user1', 'kill_pid',
-						'write_pipe','sig_pipe',
-						'read_value',
-					])
-				}
 				when('RSYNC') { $self->{$class}->utils(['get_line']) }
 				when('DB::MYSQL') { $self->{$class}->db_connect('mysql') }
 				when('HTTP::Server')
 				{
-					$self->{$class} = $self->runtime_require(__PACKAGE__.'::'.$self->{$class}->protocol())->new();						## everytime will invoke 'runtime_require' method 
+					$self->{$class} = $self->runtime_require($self->{$class}->protocol())->new();						## everytime will invoke 'runtime_require' method
 				##	$self->{$class}->{$self->{$class}->protocol()} ||= $self->runtime_require(__PACKAGE__.'::'.$self->{$class}->protocol())->new();
 				##	return $self->{$class}->{$self->{$class}->protocol()};
 				}

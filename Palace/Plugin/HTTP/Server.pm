@@ -9,8 +9,10 @@
 	{
 		my ( $self ) = @_;
 
-		ref($self).$self->env()->{'HTTP'};
-		return 'HTTP::Server::FastCGI';
+		given( $self->env()->{'GATEWAY_INTERFACE'} )
+		{
+			when(/CGI/) { return __PACKAGE__.'::FastCGI' }
+		}
 	}
 
 	sub test_http_common_server

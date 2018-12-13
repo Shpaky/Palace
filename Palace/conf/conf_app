@@ -3,6 +3,8 @@ $config = {
             'mode' => 'combat',
             'logs' => 'Palace/conf/conf_log',
 	    'error_list' => 'HPVF/logs/error_list',
+	    'level_nest' => 2,
+	    'sys_lang' => 'rus',
 
 	    'RE' => '......................................',
 	    're_uuid' => qr!([a-f0-9]{8}-([a-f0-9]{4}-){3}[a-f0-9]{12})$!,
@@ -29,18 +31,5 @@ $config = {
 				'user' => 'root'
 			}
 		},
-		'sqlite' =>
-		{
-			'connect' =>
-			{
-				'pass' => '',
-				'dns' => 'dbi:SQLite:dbname=/home/potapov.k/tvzavr_upload/tvzavr_video_upload_prod.db',
-				'error' =>
-				{
-					'RaiseError' => 1
-                                },
-				'user' => ''
-			}
-		}
 	    }
 	};
