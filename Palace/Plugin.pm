@@ -13,6 +13,9 @@
 
 		if ( ref($self) )
 		{
+			open WD, '>>', '/tmp/NEW';
+			say  WD $class;
+			close WD;
 			$self->{$class} ||= $self->runtime_require(__PACKAGE__.'::'.$class)->new();
 
 			given ($class)
@@ -24,6 +27,10 @@
 					$self->{$class} = $self->runtime_require($self->{$class}->protocol())->new();						## everytime will invoke 'runtime_require' method
 				##	$self->{$class}->{$self->{$class}->protocol()} ||= $self->runtime_require(__PACKAGE__.'::'.$self->{$class}->protocol())->new();
 				##	return $self->{$class}->{$self->{$class}->protocol()};
+				}
+				when('Model')
+				{
+					$self->{$class} = $self->runtime_require($self->{$class}->detect_plugin())->new();					## everytime will invoke 'runtime_require' method
 				}
 			}
 
@@ -50,6 +57,7 @@
 			$filename =~ s|::+|/|g;
 			$filename =~ /\.pm$/ or $filename .= '.pm';
 
+
 			exists($INC{$filename}) or ( -f $filename && eval('require '.$pckgnm.';') ) or ( delete($INC{$filename}), die($@,$!) );
 			$pckgnm = $up_pack;
 		}
@@ -58,23 +66,23 @@
 
 	sub get_value
         {
-                $s->{$_[1]} ||= $_[0]->{$_[1]};
-                return $s->{$_[1]};
+                $s->{ref($_[0])}->{$_[1]} ||= $_[0]->{$_[1]};
+                return $s->{ref($_[0])}->{$_[1]};
         }
 
         sub set_value
         {
                 $_[0]->{$_[1]} = $_[2];
-                delete $s->{$_[1]};
+                delete $s->{ref($_[0])}->{$_[1]};
 		return $_[0];
         }
 
 	sub set_data
 	{
 		lc ref($_[1]) eq 'hash'
-		? map { $_[0]->{$_} = $_[1]->{$_} and delete $s->{$_} } keys %{$_[1]}
+		? map { $_[0]->{$_} = $_[1]->{$_} and delete $s->{ref($_[0])}->{$_} } keys %{$_[1]}
 		: die 'Second parameter necessary was be link to hash!';
 
 		return $_[0]
-	}	
+	}
 	1;

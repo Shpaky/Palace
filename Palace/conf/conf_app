@@ -20,6 +20,13 @@ $config = {
 	    [
 		'Dynamo','Djany','Shpaky'
 	    ],
+	    'MODEL SETTINGS' => '==========================',
+	    'model' =>
+	    {
+		'plugin' => 'DCBA',##Data Cache|Base Accessor
+		'cache' => 'Redis',
+		'db' => 'MySQL',
+	    },
 	    'DATABASE_SETTINGS' => '=======================',
 	    'db' =>
 	    {
@@ -27,8 +34,9 @@ $config = {
 		{
 			'connect' =>
 			{
-				'dns' => 'dbi:mysql:vk:195.16.112.68',
-				'user' => 'root'
+				'dns' => 'dbi:mysql:weekendexpress:127.0.0.1',
+				'user' => 'shpaky',
+				'pass' => '1826722'
 			}
 		},
 	    }

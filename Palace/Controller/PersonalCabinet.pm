@@ -37,6 +37,7 @@
 		print "<body>\n";
 		print "<h3>start page</h3>";
 		print "<h3>Perform ".(caller(0))[3]."</h3>";
+		print "<h3>PID ".$$."</h3>";
 		print "</body> </html>\n";
 
 		$log->info('|'.$$.'|'.'End perform \''.(caller(0))[3].'\' route.');
@@ -105,6 +106,7 @@
 		print "</head>\n";
 		print "<body>\n";
 		print "<h3>Perform ".(caller(0))[3]."</h3>";
+		print "<h3>PID ".$$."</h3>";
 		print "</body> </html>\n";
 
 		$log->info('|'.$$.'|'.'End perform \''.(caller(0))[3].'\' route.');
@@ -118,9 +120,14 @@
 		[
 			'init_log',
 			'caller_info',
+			'get_dates',
 		]);
 		&init_log($self->config()->{'logs'});
 
+
+		open  WD, '>', '/tmp/INSTANCE';
+		print WD Data::Dumper->Dump([$self],['self']);
+		close WD;
 
 		## forming message text log need replace to 'Dictionary' plugin
 		$self->config()->{'mode'} eq 'debug'
@@ -132,12 +139,74 @@
 
 		my $app_dir = $self->env()->{'env'}->{'PWD'};
 
+		my $data = $self->connect_plugin('Model')->set_data(
+		{
+			'cache' => $self->config()->{'model'}->{'cache'},						## think about since replace logic of detecting 'cache' module logic into 'Model' plugin
+			'db' => $self->config()->{'model'}->{'db'},							## think about since replace logic of detecting 'db' module logic into 'Model' plugin
+			'id' => '1923',
+			'table' => 'clients',
+#			'field' => ['regdate', 'email', 'name', 'phone', 'balance', 'status', 'message', 'hidden', 'storage'],
+			'field' => ['regdate', 'email', 'name', 'phone', 'balance', 'status' ],
+			'where' =>
+			{
+				'name' => 'Яночка-Душа',
+			}
+		})->get();
+
+
+		open  WD, '>', '/tmp/UP_DATA';
+		say   WD Data::Dumper->Dump([$data],['data']);
+		close WD;
+
+#		$self->connect_plugin('Model')->set_data(
+#		{
+#			'cache' => $self->config()->{'model'}->{'cache'},
+#			'id' => '1923',
+#			'field' => ['hidden'],
+#		})->remove();
+
+		$self->connect_plugin('Model')->set_data(
+		{
+			'cache' => $self->connect_plugin('Model')->detect_cache(),
+			'db' => $self->connect_plugin('Model')->detect_db(),
+			'id' => '1980',
+			'table' => 'clients',
+			'data' =>
+			{
+#				'message' => 'Dynamo Moscow the best club of world!',
+#				'storage'=> 'Mother Russia and God over head its main!',
+#				'hidden' => 'White Power!',
+				'regdate'=> &get_dates(time)->[3],
+				'phone'=> 89154974142,
+				'balance' => $data->[0]->{'balance'},
+				'status' => $data->[0]->{'status'},
+				'email' => $data->[0]->{'email'},
+				'name' => 'Слава',
+				'login' => 'science',
+				'password' => 'dd375ca7c79a802b06b9e49747307c5f',
+			},
+		})->set();
+
 		print "Content-Type: text/html\r\n\r\n";
+		say Data::Dumper->Dump([$self],['self']);
+		say Data::Dumper->Dump([$data],['data']);
+
 		print "<html> <head>\n";
+		print "<meta charset='utf-8'>";
 		print "<title>Me managed!</title>";
 		print "</head>\n";
 		print "<body>\n";
-		print "<h3>Perform ".(caller(0))[3]."</h3>";
+		print "<h3>Perform ".$data->[0]->{'message'}."</h3>";
+		print "<h3>Perform ".$data->[0]->{'hidden'}."</h3>";
+		print "<h3>Perform ".$data->[0]->{'phone'}."</h3>";
+		print "<h3>Perform ".$data->[0]->{'email'}."</h3>";
+		print "<h3>Perform ".$data->[0]->{'storage'}."</h3>";
+		print "<h3>Perform ".$data->[0]->{'regdate'}."</h3>";
+		print "<h3>Perform ".$data->[0]->{'name'}."</h3>";
+		print "<h3>Perform ".$data->[0]->{'balance'}."</h3>";
+		print "<h3>Perform ".$data->[0]->{'status'}."</h3>";
+		print "<h3>Content ".(caller(0))[3]."</h3>";
+		print "<h3>PID ".$$."</h3>";
 		print "</body> </html>\n";
 
 		$self->config()->{'mode'} eq 'debug'
@@ -168,6 +237,7 @@
 		print "</head>\n";
 		print "<body>\n";
 		print "<h3>Perform ".(caller(0))[3]."</h3>";
+		print "<h3>PID ".$$."</h3>";
 		print "</body> </html>\n";
 
 		$log->info('|'.$$.'|'.'End perform \''.(caller(0))[3].'\' route.');
