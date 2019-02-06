@@ -6,6 +6,116 @@
 
 	use DBI;
 
+	our $detect_condition =
+	{
+		'>' => '>',
+		'<' => '<',
+		'>=' => '>=',
+		'<=' => '<=',
+		'!=' => '!='
+	};
+
+	##
+	##	$self =
+	##	{
+	##		'table' => 'table_name',
+	##		'field' => ['f1', 'f2,', 'f3],
+	##		'limit' => 'numeric_value',
+	##		'order' =>
+	##		[
+	##			'field',	|field by sorted|
+	##			'inversion',	|flag of inversion|
+	##		],
+	##		'where' =>
+	##		{
+	##			|simple condition - field equal value|
+	##			'field' => 'value',
+	##			...............................................
+	##			|inversion condition - field not equal value|
+	##			'any keys' =>
+	##			{
+	##				'field_1' =>
+	##				[
+	##					'value_1', 'value_2', 'value_3'
+	##				]
+	##				'field_2' =>
+	##				[
+	##					'value_1', 'value_2', 'value_3'
+	##				],
+	##				'field_3' =>
+	##			},
+	##			...............................................
+	##			|numeric condition - field more value|
+	##			'>' =>
+	##			{
+	##				'field_1' =>
+	##				[
+	##					'value_1', 'value_2', 'value_3'
+	##				]
+	##				'field_2' =>
+	##				[
+	##					'value_1', 'value_2', 'value_3'
+	##				],
+	##				'field_3' =>
+	##				[
+	##					'value_1', 'value_2', 'value_3'
+	##				],
+	##			},
+	##			................................................
+	##			|numeric condition - field less value|
+	##			'<' =>
+	##			{
+	##				'field_1' =>
+	##				[
+	##					'value_1', 'value_2', 'value_3'
+	##				]
+	##				'field_2' =>
+	##				[
+	##					'value_1', 'value_2', 'value_3'
+	##				],
+	##				'field_3' =>
+	##				[
+	##					'value_1', 'value_2', 'value_3'
+	##				],
+	##			},
+	##			...............................................
+	##			|numeric condition - field more or equal value|
+	##			'>=' =>
+	##			{
+	##				'field_1' =>
+	##				[
+	##					'value_1', 'value_2', 'value_3'
+	##				]
+	##				'field_2' =>
+	##				[
+	##					'value_1', 'value_2', 'value_3'
+	##				],
+	##				'field_3' =>
+	##				[
+	##					'value_1', 'value_2', 'value_3'
+	##				],
+	##			},
+	##			...............................................
+	##			|numeric condition - field less or equal value|
+	##			'<=' =>
+	##			{
+	##				'field_1' =>
+	##				[
+	##					'value_1', 'value_2', 'value_3'
+	##				]
+	##				'field_2' =>
+	##				[
+	##					'value_1', 'value_2', 'value_3'
+	##				],
+	##				'field_3' =>
+	##				[
+	##					'value_1', 'value_2', 'value_3'
+	##				],
+	##			},
+	##		},
+	##	};
+	##
+
 	sub select 
 	{
 		my ( $self ) = @_;
@@ -19,8 +129,8 @@
 			{
 				map {
 					my $nf = $_;
-					map{
-						( $n || $c ) and $cond .= ' and '; $cond .= $nf .'!='.'"'. $_ .'"'; $n++
+					map {
+						( $n || $c ) and $cond .= ' and '; $cond .= $nf .($detect_condition->{$f} or '!=').'"'. $_ .'"'; $n++
 					} @{$self->{'where'}->{$f}->{$nf}}
 				} keys %{$self->{'where'}->{$f}}
 			}
@@ -131,7 +241,7 @@
 				map {
 					my $nf = $_;
 					map {
-						( $n || $c ) and $cond .= ' and '; $cond .= $nf .'!='.'"'. $_ .'"'; $n++
+						( $n || $c ) and $cond .= ' and '; $cond .= $nf .($detect_condition->{$f} or '!=').'"'. $_ .'"'; $n++
 					} @{$self->{'where'}->{$f}->{$nf}}
 				} keys %{$self->{'where'}->{$f}}
 			}
@@ -181,7 +291,7 @@
 				map {
 					my $nf = $_;
 					map{
-						( $n || $c ) and $cond .= ' and '; $cond .= $nf .'!='.'"'. $_ .'"'; $n++
+						( $n || $c ) and $cond .= ' and '; $cond .= $nf .($detect_condition->{$f} or '!=').'"'. $_ .'"'; $n++
 					} @{$self->{'where'}->{$f}->{$nf}}
 				} keys %{$self->{'where'}->{$f}}
 			}

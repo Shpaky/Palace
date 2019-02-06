@@ -15,30 +15,37 @@
 
 		given ( (split(/[:]+/,$class))[-1] )
 		{
-			when($self->config->{'model'}->{'db'}) { $self->connect_db() }
+			when($self->SUPER::config->{'model'}->{'db'}) { $self->connect_db() }
 		}
 		$self;
+	}
+
+	sub config
+	{
+		state $conf;
+		$conf || ( open RC, '<', $_[0]->SUPER::config()->{'model'}->{'conf_path'} and map { $c .= $_ } <RC> and close RC and $conf = eval("$c;") );
+		return $conf;
 	}
 
 	sub detect_plugin
 	{
 		my ( $self ) = @_;
 
-		return __PACKAGE__.'::'.$self->config()->{'model'}->{'plugin'};
+		return __PACKAGE__.'::'.$self->SUPER::config()->{'model'}->{'plugin'};
 	}
 
 	sub detect_cache
 	{
 		my ( $self ) = @_;
 
-		return $self->config()->{'model'}->{'cache'};
+		return $self->SUPER::config()->{'model'}->{'cache'};
 	}
 
 	sub detect_db
 	{
 		my ( $self ) = @_;
 
-		return $self->config()->{'model'}->{'db'};
+		return $self->SUPER::config()->{'model'}->{'db'};
 	}
 
 	sub connect_db
@@ -47,15 +54,15 @@
 
 		state ( $mysql, $postgresql, $sqlite );
 
-		given(lc($self->config()->{'model'}->{'db'}))
+		given(lc($self->SUPER::config()->{'model'}->{'db'}))
 		{
 			when('mysql')
 			{
 				$self->{'reset'} and $mysql = '';
 				$mysql ||= DBI->connect(
-								$self->config()->{'db'}->{lc($self->config()->{'model'}->{'db'})}->{'connect'}->{'dns'},
-								$self->config()->{'db'}->{lc($self->config()->{'model'}->{'db'})}->{'connect'}->{'user'},
-								$self->config()->{'db'}->{lc($self->config()->{'model'}->{'db'})}->{'connect'}->{'pass'}
+								$self->SUPER::config()->{'db'}->{lc($self->SUPER::config()->{'model'}->{'db'})}->{'connect'}->{'dns'},
+								$self->SUPER::config()->{'db'}->{lc($self->SUPER::config()->{'model'}->{'db'})}->{'connect'}->{'user'},
+								$self->SUPER::config()->{'db'}->{lc($self->SUPER::config()->{'model'}->{'db'})}->{'connect'}->{'pass'}
 				);
 				$self->{'dbh'} = $mysql;
 			}

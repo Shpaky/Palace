@@ -26,6 +26,7 @@ $config = {
 		'plugin' => 'DCBA',##Data Cache|Base Accessor
 		'cache' => 'Redis',
 		'db' => 'MySQL',
+		'conf_path' => 'Palace/Plugin/Model/DCBA/conf/config',
 	    },
 	    'DATABASE_SETTINGS' => '=======================',
 	    'db' =>

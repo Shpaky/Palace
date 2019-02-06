@@ -143,13 +143,32 @@
 		{
 			'cache' => $self->config()->{'model'}->{'cache'},						## think about since replace logic of detecting 'cache' module logic into 'Model' plugin
 			'db' => $self->config()->{'model'}->{'db'},							## think about since replace logic of detecting 'db' module logic into 'Model' plugin
-			'id' => '1923',
+#			'id' => '1923',
 			'table' => 'clients',
-#			'field' => ['regdate', 'email', 'name', 'phone', 'balance', 'status', 'message', 'hidden', 'storage'],
 			'field' => ['regdate', 'email', 'name', 'phone', 'balance', 'status' ],
 			'where' =>
 			{
-				'name' => 'Яночка-Душа',
+			#	'name' => 'Яночка-Душа',
+				'not!' =>
+				{
+					'id' => [ '2056', '2057', '2058' ],
+				},
+				'<' =>
+				{
+					id => [ '10' ],
+				},
+				'>' =>
+				{
+					id => [ '0' ],
+				},
+#				'>='=>
+#				{
+#					id => [ '3', '4', '5' ],
+#				},
+				'<='=>
+				{
+					id => [ '10' ],
+				},
 			}
 		})->get();
 
@@ -158,18 +177,22 @@
 		say   WD Data::Dumper->Dump([$data],['data']);
 		close WD;
 
-#		$self->connect_plugin('Model')->set_data(
-#		{
-#			'cache' => $self->config()->{'model'}->{'cache'},
-#			'id' => '1923',
-#			'field' => ['hidden'],
-#		})->remove();
+		$self->connect_plugin('Model')->set_data(
+		{
+			'cache' => $self->config()->{'model'}->{'cache'},
+			'db' => $self->connect_plugin('Model')->detect_db(),
+			'table' => 'clients',
+			'where' =>
+			{
+				'name' => 'Солнышко'
+			}
+		})->remove();
 
 		$self->connect_plugin('Model')->set_data(
 		{
 			'cache' => $self->connect_plugin('Model')->detect_cache(),
 			'db' => $self->connect_plugin('Model')->detect_db(),
-			'id' => '1980',
+#			'id' => '1980',
 			'table' => 'clients',
 			'data' =>
 			{
@@ -181,7 +204,7 @@
 				'balance' => $data->[0]->{'balance'},
 				'status' => $data->[0]->{'status'},
 				'email' => $data->[0]->{'email'},
-				'name' => 'Слава',
+				'name' => 'Солнышко',
 				'login' => 'science',
 				'password' => 'dd375ca7c79a802b06b9e49747307c5f',
 			},

@@ -60,12 +60,31 @@
 				}
 				else
 				{
-					if ( my $fid = $self->fetch_id_by_table() and $self->check_auto_set_data_by_id_to_cache() )
+					## unities two action in single condition, this scheme allow use 'id' without relation with table of database
+					if ( my $fid = $self->fetch_id_by_table() and $self->check_auto_obtain_data_by_id_to_cache() )
 					{
+						my $id;
 						map {
-							$_->{$fid} and $cache->set_data({'data' => $_, 'id' => $_->{$self->fetch_id_by_table()}, 'cache' => $self->{'cache'}})->set()
-						} @{$data};
+							( $data->[$_]->{$fid} or $id ||= $db->set_data({'where' => $self->{'where'}, 'field' => [ $fid ], 'db' => $self->{'db'}, 'table' => $self->{'table'}})->get() )
+							&& $cache->set_data({'data' => $data->[$_], 'id' => $data->[$_]->{$fid} || $id->[$_]->{$fid}, 'cache' => $self->{'cache'}})->set();
+						} 0..@{$data}-1;
 					}
+
+					## collect data to cache if exists id by default
+#					if ( my $fid = $self->fetch_id_by_table() )
+#					{
+#						my $sid;
+#						map {
+#							$data->[$_]->{$fid} and $cache->set_data({'data' => $data->[$_], 'id' => $data->[$_]->{$fid}, 'cache' => $self->{'cache'}})->set() and $sid->{$_} = 1
+#						} 0..@{$data}-1;
+#						## collect data to cache by fetching ids from database if explicitly specified
+#						if ( $self->check_auto_obtain_data_by_id_to_cache() and my $ids = $db->set_data({'where' => $self->{'where'},'field' => [ $fid ],'db' => $self->{'db'},'table' => $self->{'table'}})->get() )
+#						{
+#							map {
+#								$cache->set_data({'data' => $data->[$_], 'id' => $ids->[$_]->{$fid}, 'cache' => $self->{'cache'}})->set();
+#							} grep { not $sid->{$_} } 0..@{$data}-1;
+#						}
+#					}
 				}
 				return $data;
 			}
@@ -121,7 +140,7 @@
 		{
 			if ( $self->{'id'} )
 			{
-				$cache->set_data({ map { $_ => $self->{$_} } grep {/data|id|cache/} keys %{$self} })->set() ;
+				$cache->set_data({ map { $_ => $self->{$_} } grep {/data|id|cache/} keys %{$self} })->set();
 			}
 			else
 			{
@@ -177,7 +196,7 @@
 		{
 			if ( my $fid = $self->fetch_id_by_table() and $self->check_auto_delete_data_by_id_in_cache() )
 			{
-				my $id = $db->set_data({'where' => $self->{where}, 'field' => [ $fid ], 'db' => $self->{'db'}, 'table' => $self->{'table'}})->get();
+				my $id = $db->set_data({'where' => $self->{'where'}, 'field' => [ $fid ], 'db' => $self->{'db'}, 'table' => $self->{'table'}})->get();
 				map {
 					$cache->set_data({'field' => $self->{'field'}, 'id' => $_->{$fid}, 'cache' => $self->{'cache'}})->remove()
 				} @{$id};
@@ -259,32 +278,27 @@
 
 	sub fetch_id_by_table
 	{
-		return 'id';
-	}
-
-	sub check_auto_set_data_by_id_to_cache
-	{
-		0;
+		$_[0]->config()->{'db'}->{lc($_[0]->{'db'})}->{'tables'}->{$_[0]->{'table'}}->{'id'};
 	}
 
 	sub check_auto_update_data_by_id_to_cache
 	{
-		1;
+		$_[0]->config()->{'db'}->{lc($_[0]->{'db'})}->{'tables'}->{$_[0]->{'table'}}->{'auto_update_data_by_id_to_cache'};
 	}
 	
 	sub check_auto_obtain_data_by_id_to_cache
 	{
-		1;
+		$_[0]->config()->{'db'}->{lc($_[0]->{'db'})}->{'tables'}->{$_[0]->{'table'}}->{'auto_obtain_data_by_id_to_cache'};
 	}
 
 	sub check_auto_delete_data_by_id_in_cache
 	{
-		0;
+		$_[0]->config()->{'db'}->{lc($_[0]->{'db'})}->{'tables'}->{$_[0]->{'table'}}->{'auto_delete_data_by_id_to_cache'};
 	}
 	
 	sub check_auto_insert_data_by_id_to_cache
 	{
-		0;
+		$_[0]->config()->{'db'}->{lc($_[0]->{'db'})}->{'tables'}->{$_[0]->{'table'}}->{'auto_insert_data_by_id_to_cache'};
 	}
 
 	sub set_data
