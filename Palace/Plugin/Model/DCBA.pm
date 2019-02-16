@@ -1,16 +1,24 @@
 #!/usr/bin/perl
 
 	package Palace::Plugin::Model::DCBA;
-	use base 'Palace::Plugin::Model';
+
 	use 5.10.0;
-
+	use base qw|Palace::Plugin::Model DataMatching|;
 	use lib './DCBA';
-#	use Cache;
-#	use DB;
-#	use ACCORDANCE;
-	
 
-	state $s;
+
+	state $s = {};
+
+	state $fields =
+	[
+		'table', 'field', 'where', 'data', 'order', 'limit', 'id', 'cache', 'db'
+	];
+
+	state $payload =
+	[
+		'table', 'field', 'where', 'data', 'order', 'limit', 'id'
+	];
+
 
 	sub new
 	{
@@ -29,18 +37,19 @@
 		state $cache ||= $self->new('Cache');
 		state $db ||= $self->new('DataBase');
 
+		$self->check_reference_object();
 	
 		if ( $self->{'id'} and $data = $cache->set_data({ map { $_ => $self->{$_} } grep {/field|id|cache/} keys %{$self} })->get() ) { return $data }
 		else 
 		{ 	
-#			my $cdb = &ACCORDANCE::check_reference_obj($self->{'dbh'}, 'DBI::db');
-#			my $ctb = &ACCORDANCE::check_table_exist($self->{'table'});
+#			my $cdb = &ACCORDANCE::check_reference_obj($self->{'dbh'}, 'DBI::db');			## replace to lower level
+#			my $ctb = &ACCORDANCE::check_table_exist($self->{'table'});				## may replace to lower level
 #			
 			if ( $self->{'where'} )
 			{ 
-#				my $ctw = &ACCORDANCE::check_type_instance($self->{'where'}, 'HASH');
+#				my $ctw = &ACCORDANCE::check_type_instance($self->{'where'}, 'HASH');		## may replace to lower level
 #
-#				if ( $ctw )
+#				if ( $ctw )									## may replace to lower level
 #				{
 #					map { &ACCORDANCE::check_field_value_valid($self->{'table'},$_,$self->{'where'}->{$_}) || return undef } grep { $self->{'where'}->{$_} } keys%{$self->{'where'}};
 #				}
@@ -168,6 +177,7 @@
 
 		state $cache ||= $self->new('Cache');
 		state $db ||= $self->new('DataBase');
+
 
 #		my $cdb = &ACCORDANCE::check_reference_obj($self->{'dbh'}, 'DBI::db');
 #		my $ctb = &ACCORDANCE::check_table_exist($self->{'table'});
@@ -301,11 +311,15 @@
 		$_[0]->config()->{'db'}->{lc($_[0]->{'db'})}->{'tables'}->{$_[0]->{'table'}}->{'auto_insert_data_by_id_to_cache'};
 	}
 
+	sub check_reference_object
+	{
+		$_[0]->SUPER::check_reference_object();
+	}
+
 	sub set_data
 	{
 		lc ref($_[1]) eq 'hash'
-		? map { $_[0]->{$_} = $_[1]->{$_} or delete $_[0]->{$_} } ( 'table', 'field', 'where', 'data', 'order', 'limit', 'id', 'cache', 'db' )  ## better suited for big instances and small lists
-	##	? map { $_[0]->{$_} = $_[1]->{$_} or delete $_[0]->{$_} } grep { /(table|field|where|data|order|limit|id|cache|db)/ } keys %{$_[0]}	## better suited for small instances and big lists
+		? map { defined($_[1]->{$_}) ? $_[0]->{$_} = $_[1]->{$_} : ( $_ ~~ $payload and delete $_[0]->{$_} ) } @{$fields}	## better suited for big instances and small lists
 		: die 'Second parameter necessary was be link to hash!';
 
 		return $_[0]

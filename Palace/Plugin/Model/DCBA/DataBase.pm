@@ -1,11 +1,10 @@
 #!/usr/bin/perl
 
 	package Palace::Plugin::Model::DCBA::DataBase;
-	use base 'Palace::Plugin::Model::DCBA';
-	use 5.10.0;
 
-#	use COMMON;
-#	use DICTIONARY;
+	use 5.10.0;
+	use base 'Palace::Plugin::Model::DCBA';
+
 
 	sub new
 	{

@@ -1,9 +1,10 @@
 #!/usr/bin/perl
 
 	package Palace::Plugin;
-	use base 'Palace';
-	use lib './Plugin';
+
 	use 5.12.0;
+	use base 'Palace';
+	use lib 'Plugin';
 
 	state $s;
 

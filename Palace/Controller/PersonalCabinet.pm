@@ -1,9 +1,10 @@
 #!/usr/bin/perl
 
 	package Palace::Controller::PersonalCabinet;
+
+	use 5.10.0;
 	use base 'Palace::Controller';
 	use FindBin qw|$Bin|;
-	use feature qw|state say|;
 
 	use lib $Bin.'/Palace/lib';
 	
@@ -119,24 +120,22 @@
 		$self->tools(
 		[
 			'init_log',
+			'init_log_1',
 			'caller_info',
-			'get_dates',
+			'get_dates'
 		]);
-		&init_log($self->config()->{'logs'});
+#		&init_log($self->config()->{'logs'});
+#		&init_log_1();
 
-
-		open  WD, '>', '/tmp/INSTANCE';
-		print WD Data::Dumper->Dump([$self],['self']);
-		close WD;
 
 		## forming message text log need replace to 'Dictionary' plugin
-		$self->config()->{'mode'} eq 'debug'
-		? $log->info('|'.$$.'|'.'Begin perform \''.&caller_info($self->config()->{'level_nest'}).'\' route.')
-		: $log->info('|'.$$.'|'.'Begin perform \''.(caller(0))[3].'\' route.');
+#		$self->config()->{'mode'} eq 'debug'
+#		? $log->info('|'.$$.'|'.'Begin perform \''.&caller_info($self->config()->{'level_nest'}).'\' route.')
+#		: $log->info('|'.$$.'|'.'Begin perform \''.(caller(0))[3].'\' route.');
+
 
 		$self->plugin();
 		my $env = $self->env();
-
 		my $app_dir = $self->env()->{'env'}->{'PWD'};
 
 		my $data = $self->connect_plugin('Model')->set_data(
@@ -232,9 +231,9 @@
 		print "<h3>PID ".$$."</h3>";
 		print "</body> </html>\n";
 
-		$self->config()->{'mode'} eq 'debug'
-		? $log->info('|'.$$.'|'.'End perform \''.&caller_info($self->config()->{'level_nest'}).'\' route.')
-		: $log->info('|'.$$.'|'.'End perform \''.(caller(0))[3].'\' route.')
+#		$self->config()->{'mode'} eq 'debug'
+#		? $log->info('|'.$$.'|'.'End perform \''.&caller_info($self->config()->{'level_nest'}).'\' route.')
+#		: $log->info('|'.$$.'|'.'End perform \''.(caller(0))[3].'\' route.')
 	}
 
 	sub set_info

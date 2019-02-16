@@ -1,19 +1,12 @@
 #!/usr/bin/perl
 
 	package Palace::Plugin::Model::DCBA::DataBase::MySQL;
-	use base 'Palace::Plugin::Model::DCBA::DataBase';
+
 	use 5.10.0;
+	use base 'Palace::Plugin::Model::DCBA::DataBase';
 
 	use DBI;
 
-	our $detect_condition =
-	{
-		'>' => '>',
-		'<' => '<',
-		'>=' => '>=',
-		'<=' => '<=',
-		'!=' => '!='
-	};
 
 	##
 	##	$self =
@@ -116,6 +109,15 @@
 	##	};
 	##
 
+	our $detect_condition =
+	{
+		'>' => '>',
+		'<' => '<',
+		'>=' => '>=',
+		'<=' => '<=',
+		'!=' => '!='
+	};
+
 	sub select 
 	{
 		my ( $self ) = @_;
@@ -188,15 +190,16 @@
 #			$log->warn(&COMMON::caller_info($CONFIG::level_nesting).DICTIONARY->new(\$CONFIG::system_language)->get_text_log('error_query').'|'.$self->{'dbh'}->err.'|');
 			return 0;
 		}
-#		else
-#		{	if ( scalar keys %$rows == 0 )
-#			{
+		else
+		{
+			if ( scalar @{$array} == 0 )
+			{
 #				$log->warn(&COMMON::caller_info($CONFIG::level_nesting).DICTIONARY->new(\$CONFIG::system_language)->get_text_log('empty_query').'|'.$query.'|');
-#				return 0;
-#			}
+				return 0;
+			}
 #			$log->info(DICTIONARY->new(\$CONFIG::system_language)->get_text_log('success_query').'|'.$query.'|');
 			return $array;
-#		}
+		}
 	}
 
 	sub insert

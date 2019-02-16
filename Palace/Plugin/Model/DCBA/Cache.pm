@@ -11,20 +11,10 @@
 
 		my $data = eval('&'.eval{ref($self).'::'.$self->{'cache'}}.'::'.'get('.$self->{'id'}.')');
 
-		open  WD, '>>', '/tmp/CACHE';
-		print WD Data::Dumper->Dump([$self],['self']);
-		print WD Data::Dumper->Dump([$data],['data']);
-		say   WD '-' x 55;
-		
 		return [ $data ] unless scalar @{$self->{'field'}};
 
 		map { delete($data->{$_}) } grep { not $_ ~~ $self->{'field'} } keys %$data;
 	
-		say   WD 'AFTER:';
-		print WD Data::Dumper->Dump([$data],['data']);
-		say   WD '+' x 55;
-		close WD;
-
 		return scalar keys(%{$data}) == scalar @{$self->{'field'}} ? [ $data ] : undef;
 	}
 

@@ -1,4 +1,4 @@
-#!/usr/lib/perl
+#!/usr/bin/perl
 
 	package Adapter;
 
@@ -12,8 +12,8 @@
 	my $pairs = 
 	{ 
 		log_debug 	=> [qw/debug/],
-		log_info 	=> [qw/info inform/],
-		log_warn 	=> [qw/notice warn warning/],
+		log_info 	=> [qw/info inform/],		## inform
+		log_warn 	=> [qw/warn warning notice/],	## notice
 		not_warn	=> [qw/errwarn/],
 		log_error	=> [qw/err error fatal crit critical alert emergency/], 
 	}; 		

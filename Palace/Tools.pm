@@ -5,11 +5,11 @@
 	use feature qw|state say|;
 	use FindBin qw|$Bin|;
 
-	use lib $Bin.'/HPVF/lib';
+	use lib $Bin.'/Palace/lib';
 
-	use Log::Any::Adapter;
-	Log::Any::Adapter->set('+Adapter');
-	use Log::Any '$log';
+#	use Log::Any::Adapter;
+#	Log::Any::Adapter->set('+Adapter');
+#	use Log::Any '$log';
 
 	use Encode;
 	use Locale::Country;
@@ -21,7 +21,7 @@
 	use File::Path qw|make_path|;
 	use File::Glob qw(bsd_glob);
 	
-	$HPVF::Tools::EXPORT =
+	$Palace::Tools::EXPORT =
 	{
 		'check_root_project' => 'subroutine',
 		'fetch_russian_name' => 'subroutine',
@@ -31,6 +31,7 @@
 		'get_line' => 'subroutine',
 		'sig_pipe' => 'subroutine',
 		'init_log' => 'subroutine',
+		'init_log_1' => 'subroutine',
 		'read_dir' => 'subroutine',
 		'kill_pid' => 'subroutine',
 		'uuid_generation' => 'subroutine',
@@ -62,35 +63,8 @@
 
 	sub export_name
 	{
-#		begin debug
-#		say '-' x 9;
-#		say caller(1);
-#		say '-' x 9;
-#		say '+' x 9;
-#		say caller(2);
-#		say '+' x 9;
-#		say '=' x 9;
-#		say caller(3);
-#		say '=' x 9;
-#		say '~' x 9;
-#		say caller(4);
-#		say '~' x 9;
-#		say '!' x 9;
-#		say caller(5);
-#		say '!' x 9;
-#		say '*' x 9;
-#		say caller(6);
-#		say '*' x 9;
-#		say '&' x 9;
-#		say caller(7);
-#		say '&' x 9;
-#		say '#' x 9;
-#		say caller(8);
-#		say '#' x 9;
-#		end debug
-#		my $pack = caller(2);
 		my $pack = ref($_[0]);
-		map { $HPVF::Tools::EXPORT->{$_} and local *myglob = eval('$'.__PACKAGE__.'::'.'{'.$_.'}'); *{$pack.'::'.$_} = *myglob } @{$_[1]};
+		map { $Palace::Tools::EXPORT->{$_} and local *myglob = eval('$'.__PACKAGE__.'::'.'{'.$_.'}'); *{$pack.'::'.$_} = *myglob } @{$_[1]};
 	}
 
 	sub caller_info
@@ -187,7 +161,7 @@
 		$log->error('|'.$$.'|'.'Can`t block: \''.$sig.'\'.') and die;
 
 		sleep 1;
-		if ( -p $HPVF::pipe )
+		if ( -p $Tools::pipe )
 		{
 			if ( my $child = open STDIN, '-|' )
 			{
@@ -198,13 +172,13 @@
 				int($v) and
 				(
 					$log->error('|'.$$.'|'.'Process child |'.$v.'| of convert video, execute failed.') and
-					map { &kill_pid('TERM',$_) } values %{$HPVF::pid} and
+					map { &kill_pid('TERM',$_) } values %{$Tools::pid} and
 					exit
 				)
 			}
 			else
 			{
-				my $v = &read_value($HPVF::pipe);
+				my $v = &read_value($Tools::pipe);
 				print $v;
 				exit;
 			}
@@ -212,7 +186,7 @@
 		else
 		{
 			$log->warn('|'.$$.'|'.'Received signal, but pipe not exist.');
-			&create_pipe($HPVF::pipe,'0700');
+			&create_pipe($Tools::pipe,'0700');
 			&sig_user1();
 		}
 
@@ -382,6 +356,18 @@
 	{
 		use Log::Log4perl;
 		Log::Log4perl->init($_[0]);
+	}
+
+
+	sub init_log_1
+	{
+		use Log::Log4perl;
+		if (Log::Log4perl->initialized())
+		{
+			open  WD, '>', '/tmp/OLD_CONFIG';
+			say   WD Data::Dumper->Dump([$Log::Log4perl::Config::OLD_CONFIG],['OLD_CONFIG']);
+			close WD;
+		}
 	}
 
 	sub get_line
