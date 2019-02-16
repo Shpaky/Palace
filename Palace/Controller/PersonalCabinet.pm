@@ -125,7 +125,7 @@
 			'get_dates'
 		]);
 #		&init_log($self->config()->{'logs'});
-#		&init_log_1();
+		&init_log_1($self->config()->{'logs'});
 
 
 		## forming message text log need replace to 'Dictionary' plugin

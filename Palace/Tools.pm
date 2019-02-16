@@ -7,9 +7,6 @@
 
 	use lib $Bin.'/Palace/lib';
 
-#	use Log::Any::Adapter;
-#	Log::Any::Adapter->set('+Adapter');
-#	use Log::Any '$log';
 
 	use Encode;
 	use Locale::Country;
@@ -364,9 +361,38 @@
 		use Log::Log4perl;
 		if (Log::Log4perl->initialized())
 		{
-			open  WD, '>', '/tmp/OLD_CONFIG';
-			say   WD Data::Dumper->Dump([$Log::Log4perl::Config::OLD_CONFIG],['OLD_CONFIG']);
-			close WD;
+			Log::Log4perl->init($_[0],&unite_hashes(&Log::Log4perl::Config::config_read($_[0]),$Log::Log4perl::Config::OLD_CONFIG));
+		}
+		else
+		{
+			Log::Log4perl->init($_[0]);
+		}
+	}
+
+	sub unite_hashes
+	{
+		my $hash;
+
+		for (@_)
+		{
+			&extract_hash($_,$hash);
+		}
+
+		return $hash;
+	}
+
+	sub extract_hash
+	{
+		for my $key (keys %{$_[0]})
+		{
+			if ( lc(ref($_[0]->{$key})) eq 'hash' and scalar keys %{$_[0]->{$key}} )
+			{
+				&extract_hash($_[0]->{$key},$_[1]->{$key});
+			}
+			else
+			{
+				$_[1]->{$key} = $_[0]->{$key};
+			}
 		}
 	}
 
