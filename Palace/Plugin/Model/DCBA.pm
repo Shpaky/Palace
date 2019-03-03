@@ -37,7 +37,7 @@
 		state $cache ||= $self->new('Cache');
 		state $db ||= $self->new('DataBase');
 
-		$self->check_reference_object();
+#		$self->check_reference_object();
 	
 		if ( $self->{'id'} and $data = $cache->set_data({ map { $_ => $self->{$_} } grep {/field|id|cache/} keys %{$self} })->get() ) { return $data }
 		else 
@@ -78,22 +78,6 @@
 							&& $cache->set_data({'data' => $data->[$_], 'id' => $data->[$_]->{$fid} || $id->[$_]->{$fid}, 'cache' => $self->{'cache'}})->set();
 						} 0..@{$data}-1;
 					}
-
-					## collect data to cache if exists id by default
-#					if ( my $fid = $self->fetch_id_by_table() )
-#					{
-#						my $sid;
-#						map {
-#							$data->[$_]->{$fid} and $cache->set_data({'data' => $data->[$_], 'id' => $data->[$_]->{$fid}, 'cache' => $self->{'cache'}})->set() and $sid->{$_} = 1
-#						} 0..@{$data}-1;
-#						## collect data to cache by fetching ids from database if explicitly specified
-#						if ( $self->check_auto_obtain_data_by_id_to_cache() and my $ids = $db->set_data({'where' => $self->{'where'},'field' => [ $fid ],'db' => $self->{'db'},'table' => $self->{'table'}})->get() )
-#						{
-#							map {
-#								$cache->set_data({'data' => $data->[$_], 'id' => $ids->[$_]->{$fid}, 'cache' => $self->{'cache'}})->set();
-#							} grep { not $sid->{$_} } 0..@{$data}-1;
-#						}
-#					}
 				}
 				return $data;
 			}

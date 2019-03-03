@@ -28,7 +28,7 @@
 		'get_line' => 'subroutine',
 		'sig_pipe' => 'subroutine',
 		'init_log' => 'subroutine',
-		'init_log_1' => 'subroutine',
+		'get_logs' => 'subroutine',
 		'read_dir' => 'subroutine',
 		'kill_pid' => 'subroutine',
 		'uuid_generation' => 'subroutine',
@@ -352,13 +352,6 @@
 	sub init_log
 	{
 		use Log::Log4perl;
-		Log::Log4perl->init($_[0]);
-	}
-
-
-	sub init_log_1
-	{
-		use Log::Log4perl;
 		if (Log::Log4perl->initialized())
 		{
 			Log::Log4perl->init($_[0],&unite_hashes(&Log::Log4perl::Config::config_read($_[0]),$Log::Log4perl::Config::OLD_CONFIG));
@@ -393,6 +386,32 @@
 			{
 				$_[1]->{$key} = $_[0]->{$key};
 			}
+		}
+	}
+
+	sub get_logs
+	{
+		if ( not defined(wantarray()) )
+		{
+			my $pack = $_[2] || caller();
+			$_[0]->{$_} and &logger($_[0]->{$_},$_,$pack) for @{$_[1]};
+		}
+		elsif ( wantarray() )
+		{
+			return map { &logger($_[0]->{$_},$_,$pack) } grep { $_[0]->{$_} } @{$_[1]};
+		}
+	}
+
+	sub logger
+	{
+		if ( not defined(wantarray()) )
+		{
+			my $pack = $_[2] || caller();
+			${$pack.'::'.$_[1]} = Log::Log4perl::get_logger($_[0]);
+		}
+		else
+		{
+			return Log::Log4perl::get_logger($_[0]);
 		}
 	}
 

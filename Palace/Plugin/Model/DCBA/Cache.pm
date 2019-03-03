@@ -33,6 +33,7 @@
 	{
 		my ( $self ) = @_;
 
+#		if ( scalar @{$self->{'field'}} )	## in case if transmitted field not matching to array reference or array will be empty then will remove full record by retrieved 'id'
 		if ( $self->{'field'} )
 		{
 			my $data = eval('&'.eval{ref($self).'::'.$self->{'cache'}}.'::'.'get('.$self->{'id'}.')');

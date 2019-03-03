@@ -66,6 +66,7 @@
 	{
 		use Plugin;
 		$_[0]->{'Plugin'} ||= eval(__PACKAGE__.'::'.'Plugin')->new();
+		$_[1] ? $_[0]->{'Plugin'} : $_[0];
 	}
 	
 	sub connect_plugin

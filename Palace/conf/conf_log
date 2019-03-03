@@ -1,14 +1,28 @@
-log4perl.logger.Log=INFO, A1
-log4perl.appender.A1=Log::Dispatch::File
-log4perl.appender.A1.filename=Palace/logs/common_log
-log4perl.appender.A1.mode=append
-log4perl.appender.A1.layout=Log::Log4perl::Layout::PatternLayout
-log4perl.appender.A1.layout.ConversionPattern=%d %p> %F{1}:%L %M - %m%n
+log4perl.logger.WESimpleLog=INFO, WEA1
+log4perl.appender.WEA1=Log::Dispatch::File
+log4perl.appender.WEA1.filename=Palace/logs/common_log
+log4perl.appender.WEA1.mode=append
+log4perl.appender.WEA1.layout=Log::Log4perl::Layout::PatternLayout
+log4perl.appender.WEA1.layout.ConversionPattern=%d %p> %F{1}:%L - %m%n
 
-log4perl.logger.Not=WARN, A2
-log4perl.appender.A2=Log::Dispatch::Email::Sendmail
-log4perl.appender.A2.to=vvow.fox@yandex.ru vladimirsolenkov@yandex.ru
-log4perl.appender.A2.from=shpaky2012@yandex.ru
-log4perl.appender.A2.subject='Ошибка работы приложения'
-log4perl.appender.A2.layout=Log::Log4perl::Layout::PatternLayout
-log4perl.appender.A2.layout.ConversionPattern=%d %p> %F{1}:%L %M - %m%n
+log4perl.logger.WENoticeLog=WARN, WEA2, WEA3
+log4perl.appender.WEA2=Log::Dispatch::File
+log4perl.appender.WEA2.filename=Palace/logs/common_log
+log4perl.appender.WEA2.mode=append
+log4perl.appender.WEA2.layout=Log::Log4perl::Layout::PatternLayout
+log4perl.appender.WEA2.layout.ConversionPattern=%d %p> %F{1}:%L - %m%n
+
+log4perl.appender.WEA3=Log::Dispatch::Email::Sendmail
+log4perl.appender.WEA3.to=vladimirsolenkov@yandex.ru
+log4perl.appender.WEA3.from=shpaky2012@yandex.ru
+log4perl.appender.WEA3.subject='Ошибка работы приложения WeekendExpress'
+log4perl.appender.WEA3.layout=Log::Log4perl::Layout::PatternLayout
+log4perl.appender.WEA3.layout.ConversionPattern=%d %p> %F{1}:%L %M - %m%n
+
+log4perl.logger.WESimpleNot=WARN, WEA4
+log4perl.appender.WEA4=Log::Dispatch::Email::Sendmail
+log4perl.appender.WEA4.to=vladimirsolenkov@yandex.ru
+log4perl.appender.WEA4.from=shpaky2012@yandex.ru
+log4perl.appender.WEA4.subject='Ошибка работы приложения WeekendExpress'
+log4perl.appender.WEA4.layout=Log::Log4perl::Layout::PatternLayout
+log4perl.appender.WEA4.layout.ConversionPattern=%d %p> %F{1}:%L %M - %m%n

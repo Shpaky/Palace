@@ -132,13 +132,15 @@
 				map {
 					my $nf = $_;
 					map {
-						( $n || $c ) and $cond .= ' and '; $cond .= $nf .($detect_condition->{$f} or '!=').'"'. $_ .'"'; $n++
+#						( $n || $c ) and $cond .= ' and '; $cond .= $nf .($detect_condition->{$f} or '!=').'"'. $_ .'"'; $n++
+						scalar $cond and $cond .= ' and '; $cond .= $nf .($detect_condition->{$f} or '!=').'"'. $_ .'"';
 					} @{$self->{'where'}->{$f}->{$nf}}
 				} keys %{$self->{'where'}->{$f}}
 			}
 			else
 			{
-				( $c || $n ) and $cond .= ' and '; $cond .= $_ .'='.'"'. $self->{'where'}->{$_} .'"'; $c++;
+#				( $c || $n ) and $cond .= ' and '; $cond .= $_ .'='.'"'. $self->{'where'}->{$_} .'"'; $c++;
+				scalar $cond and $cond .= ' and '; $cond .= $_ .'='.'"'. $self->{'where'}->{$_} .'"';
 			}
 		} keys %{$self->{'where'}};
 		

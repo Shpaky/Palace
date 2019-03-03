@@ -14,9 +14,6 @@
 
 		if ( ref($self) )
 		{
-			open WD, '>>', '/tmp/NEW';
-			say  WD $class;
-			close WD;
 			$self->{$class} ||= $self->runtime_require(__PACKAGE__.'::'.$class)->new();
 
 			given ($class)

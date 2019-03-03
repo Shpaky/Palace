@@ -2,6 +2,11 @@ $config = {
 	    'COMMON_SETTINGS' => '=========================',
             'mode' => 'combat',
             'logs' => 'Palace/conf/conf_log',
+	    'loggers' =>
+	    {
+		'logger' => 'WESimpleLog',
+		'notice' => 'WENoticeLog',
+	    },
 	    'error_list' => 'HPVF/logs/error_list',
 	    'level_nest' => 2,
 	    'sys_lang' => 'rus',

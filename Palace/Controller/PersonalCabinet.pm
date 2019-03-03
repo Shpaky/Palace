@@ -8,9 +8,9 @@
 
 	use lib $Bin.'/Palace/lib';
 	
-	use Log::Any::Adapter;
-	Log::Any::Adapter->set('+Adapter');
-	use Log::Any '$log';
+#	use Log::Any::Adapter;
+#	Log::Any::Adapter->set('+Adapter');
+#	use Log::Any '$log';
 
 	state $errors;
 
@@ -120,18 +120,18 @@
 		$self->tools(
 		[
 			'init_log',
-			'init_log_1',
+			'get_logs',
 			'caller_info',
 			'get_dates'
 		]);
-#		&init_log($self->config()->{'logs'});
-		&init_log_1($self->config()->{'logs'});
+		state $init_log ||= &init_log($self->config()->{'logs'});
+		state $get_logs ||= 1 and &get_logs($self->config()->{'loggers'},['logger', 'notice']);
 
 
 		## forming message text log need replace to 'Dictionary' plugin
-#		$self->config()->{'mode'} eq 'debug'
-#		? $log->info('|'.$$.'|'.'Begin perform \''.&caller_info($self->config()->{'level_nest'}).'\' route.')
-#		: $log->info('|'.$$.'|'.'Begin perform \''.(caller(0))[3].'\' route.');
+		$self->config()->{'mode'} eq 'debug'
+		? $logger->info('|'.$$.'|'.'Begin perform \''.&caller_info($self->config()->{'level_nest'}).'\' route.')
+		: $logger->info('|'.$$.'|'.'Begin perform \''.(caller(0))[3].'\' route.');
 
 
 		$self->plugin();
@@ -231,9 +231,10 @@
 		print "<h3>PID ".$$."</h3>";
 		print "</body> </html>\n";
 
-#		$self->config()->{'mode'} eq 'debug'
-#		? $log->info('|'.$$.'|'.'End perform \''.&caller_info($self->config()->{'level_nest'}).'\' route.')
-#		: $log->info('|'.$$.'|'.'End perform \''.(caller(0))[3].'\' route.')
+		## forming message text log need replace to 'Dictionary' plugin
+		$self->config()->{'mode'} eq 'debug'
+		? $logger->info('|'.$$.'|'.'End perform \''.&caller_info($self->config()->{'level_nest'}).'\' route.')
+		: $logger->info('|'.$$.'|'.'End perform \''.(caller(0))[3].'\' route.');
 	}
 
 	sub set_info
