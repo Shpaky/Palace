@@ -27,7 +27,7 @@
 		$self->SUPER::new('DCBA'.'::'.$class);
 	}
 
-	sub get
+	sub select
 	{
 		my ( $self ) = @_;
 		my ( $data );
@@ -39,7 +39,7 @@
 
 #		$self->check_reference_object();
 	
-		if ( $self->{'id'} and $data = $cache->set_data({ map { $_ => $self->{$_} } grep {/field|id|cache/} keys %{$self} })->get() ) { return $data }
+		if ( $self->{'id'} and $data = $cache->set_data({ map { $_ => $self->{$_} } grep {/field|id|cache/} keys %{$self} })->select() ) { return $data }
 		else 
 		{ 	
 #			my $cdb = &ACCORDANCE::check_reference_obj($self->{'dbh'}, 'DBI::db');			## replace to lower level
@@ -61,11 +61,11 @@
 #
 #			( $cdb and $ctb ) || return undef;
 #						
-			if ( $data = $db->set_data({map { $_ => $self->{$_} } grep {/field|table|where|order|limit|db/} keys %{$self} })->get() )
+			if ( $data = $db->set_data({map { $_ => $self->{$_} } grep {/field|table|where|order|limit|db/} keys %{$self} })->select() )
 			{
 				if ( $self->{'id'} and scalar @$data == 1 )
 				{
-					$cache->set_data({'data' => $data->[0], 'id' => $self->{'id'}, 'cache' => $self->{'cache'} })->set();
+					$cache->set_data({'data' => $data->[0], 'id' => $self->{'id'}, 'cache' => $self->{'cache'} })->insert();
 				}
 				else
 				{
@@ -74,8 +74,8 @@
 					{
 						my $id;
 						map {
-							( $data->[$_]->{$fid} or $id ||= $db->set_data({'where' => $self->{'where'}, 'field' => [ $fid ], 'db' => $self->{'db'}, 'table' => $self->{'table'}})->get() )
-							&& $cache->set_data({'data' => $data->[$_], 'id' => $data->[$_]->{$fid} || $id->[$_]->{$fid}, 'cache' => $self->{'cache'}})->set();
+							( $data->[$_]->{$fid} or $id ||= $db->set_data({'where' => $self->{'where'}, 'field' => [ $fid ], 'db' => $self->{'db'}, 'table' => $self->{'table'}})->select() )
+							&& $cache->set_data({'data' => $data->[$_], 'id' => $data->[$_]->{$fid} || $id->[$_]->{$fid}, 'cache' => $self->{'cache'}})->insert();
 						} 0..@{$data}-1;
 					}
 				}
@@ -87,7 +87,7 @@
 			}
 		}
 	}
-	sub set
+	sub insert
 	{
 		my ( $self ) = @_;
 
@@ -129,19 +129,19 @@
 #			return undef;
 #		}
 
-		if ( $data = $db->set_data({map { $_ => $self->{$_} } grep {/table|data|db/} keys %{$self} })->set() )
+		if ( $data = $db->set_data({map { $_ => $self->{$_} } grep {/table|data|db/} keys %{$self} })->insert() )
 		{
 			if ( $self->{'id'} )
 			{
-				$cache->set_data({ map { $_ => $self->{$_} } grep {/data|id|cache/} keys %{$self} })->set();
+				$cache->set_data({ map { $_ => $self->{$_} } grep {/data|id|cache/} keys %{$self} })->insert();
 			}
 			else
 			{
 				if ( my $fid = $self->fetch_id_by_table() and $self->check_auto_insert_data_by_id_to_cache() )
 				{
-					my $id = $db->set_data({'where' => $self->{'data'}, 'field' => [ $fid ], 'db' => $self->{'db'}, 'table' => $self->{'table'}})->get();
+					my $id = $db->set_data({'where' => $self->{'data'}, 'field' => [ $fid ], 'db' => $self->{'db'}, 'table' => $self->{'table'}})->select();
 					map {
-						$cache->set_data({'data' => $self->{'data'}, 'id' => $_->{$fid}, 'cache' => $self->{'cache'}})->set()
+						$cache->set_data({'data' => $self->{'data'}, 'id' => $_->{$fid}, 'cache' => $self->{'cache'}})->insert()
 					} @{$id};
 				}
 			}
@@ -153,7 +153,7 @@
 		}
 	}
 
-	sub remove
+	sub delete
 	{
 		my ( $self ) = @_;
 
@@ -184,15 +184,15 @@
 
 		if ( $self->{'id'} )
 		{
-			$cache->set_data({ map { $_ => $self->{$_} } grep {/field|id|cache/} keys %{$self} })->remove() ;
+			$cache->set_data({ map { $_ => $self->{$_} } grep {/field|id|cache/} keys %{$self} })->delete() ;
 		}
 		else
 		{
 			if ( my $fid = $self->fetch_id_by_table() and $self->check_auto_delete_data_by_id_in_cache() )
 			{
-				my $id = $db->set_data({'where' => $self->{'where'}, 'field' => [ $fid ], 'db' => $self->{'db'}, 'table' => $self->{'table'}})->get();
+				my $id = $db->set_data({'where' => $self->{'where'}, 'field' => [ $fid ], 'db' => $self->{'db'}, 'table' => $self->{'table'}})->select();
 				map {
-					$cache->set_data({'field' => $self->{'field'}, 'id' => $_->{$fid}, 'cache' => $self->{'cache'}})->remove()
+					$cache->set_data({'field' => $self->{'field'}, 'id' => $_->{$fid}, 'cache' => $self->{'cache'}})->delete()
 				} @{$id};
 			}
 		}
@@ -255,15 +255,15 @@
 
 		if ( $self->{'id'} )
 		{
-			$cache->set_data({map { $_ => $self->{$_} } grep {/data|id|cache/} keys %{$self}})->set();
+			$cache->set_data({map { $_ => $self->{$_} } grep {/data|id|cache/} keys %{$self}})->insert();
 		}
 		else
 		{
 			if ( my $fid = $self->fetch_id_by_table() and $self->check_auto_update_data_by_id_to_cache() )
 			{
-				my $id = $db->set_data({'where' => $self->{where}, 'field' => [ $fid ], 'db' => $self->{'db'}, 'table' => $self->{'table'}})->get();
+				my $id = $db->set_data({'where' => $self->{where}, 'field' => [ $fid ], 'db' => $self->{'db'}, 'table' => $self->{'table'}})->select();
 				map {
-					$cache->set_data({'data' => $self->{'data'}, 'id' => $_->{$fid}, 'cache' => $self->{'cache'}})->set()
+					$cache->set_data({'data' => $self->{'data'}, 'id' => $_->{$fid}, 'cache' => $self->{'cache'}})->insert()
 				} @{$id};
 			}
 		}

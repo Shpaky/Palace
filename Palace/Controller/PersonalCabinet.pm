@@ -169,7 +169,7 @@
 					id => [ '10' ],
 				},
 			}
-		})->get();
+		})->select();
 
 
 		open  WD, '>', '/tmp/UP_DATA';
@@ -185,7 +185,7 @@
 			{
 				'name' => 'Солнышко'
 			}
-		})->remove();
+		})->delete();
 
 		$self->connect_plugin('Model')->set_data(
 		{
@@ -207,7 +207,7 @@
 				'login' => 'science',
 				'password' => 'dd375ca7c79a802b06b9e49747307c5f',
 			},
-		})->set();
+		})->insert();
 
 		print "Content-Type: text/html\r\n\r\n";
 		say Data::Dumper->Dump([$self],['self']);

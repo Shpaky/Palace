@@ -13,7 +13,7 @@
 		$self->SUPER::new('DataBase'.'::'.$class);
 	}
 
-	sub get
+	sub select
 	{
 		my ( $self ) = @_;
 
@@ -24,7 +24,7 @@
 		return $data;
 	}
 
-	sub set
+	sub insert
 	{
 		my ( $self ) = @_;
 		

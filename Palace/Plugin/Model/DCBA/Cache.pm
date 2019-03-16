@@ -5,11 +5,11 @@
 	use 5.10.0;
 
 	
-	sub get
+	sub select
 	{ 
 		my ( $self ) = @_;
 
-		my $data = eval('&'.eval{ref($self).'::'.$self->{'cache'}}.'::'.'get('.$self->{'id'}.')');
+		my $data = eval('&'.eval{ref($self).'::'.$self->{'cache'}}.'::'.'select('.$self->{'id'}.')');
 
 		return [ $data ] unless scalar @{$self->{'field'}};
 
@@ -18,28 +18,28 @@
 		return scalar keys(%{$data}) == scalar @{$self->{'field'}} ? [ $data ] : undef;
 	}
 
-	sub set
+	sub insert
 	{
 		my ( $self ) = @_; 
 
-		my $data = eval('&'.eval{ref($self).'::'.$self->{'cache'}}.'::'.'get('.$self->{'id'}.')');
+		my $data = eval('&'.eval{ref($self).'::'.$self->{'cache'}}.'::'.'select('.$self->{'id'}.')');
 
 		map { $data->{$_} = $self->{'data'}->{$_} } keys %{$self->{'data'}};
 		
-		eval('&'.ref($self).'::'.$self->{'cache'}.'::'.'set('.$self->{'id'}.','.'{ '.'map { $_ => $data->{$_} } keys %{$data}'.' }'.')');
+		eval('&'.ref($self).'::'.$self->{'cache'}.'::'.'insert('.$self->{'id'}.','.'{ '.'map { $_ => $data->{$_} } keys %{$data}'.' }'.')');
 	}
 
-	sub remove
+	sub delete
 	{
 		my ( $self ) = @_;
 
 #		if ( scalar @{$self->{'field'}} )	## in case if transmitted field not matching to array reference or array will be empty then will remove full record by retrieved 'id'
 		if ( $self->{'field'} )
 		{
-			my $data = eval('&'.eval{ref($self).'::'.$self->{'cache'}}.'::'.'get('.$self->{'id'}.')');
+			my $data = eval('&'.eval{ref($self).'::'.$self->{'cache'}}.'::'.'select('.$self->{'id'}.')');
 			map { delete($data->{$_}) } @{$self->{'field'}};
 		
-			eval('&'.ref($self).'::'.$self->{'cache'}.'::'.'set('.$self->{'id'}.','.'{ '.'map { $_ => $data->{$_} } keys %{$data}'.' }'.')');
+			eval('&'.ref($self).'::'.$self->{'cache'}.'::'.'insert('.$self->{'id'}.','.'{ '.'map { $_ => $data->{$_} } keys %{$data}'.' }'.')');
 		}
 		else
 		{
@@ -51,12 +51,12 @@
 
 	package Palace::Plugin::Model::DCBA::Cache::Memcached;
 
-	sub get
+	sub select
 	{ 
 		0;
 	} 
 		
-	sub set
+	sub insert
 	{ 
 		1;
 	} 
@@ -68,7 +68,7 @@
 
 	package Palace::Plugin::Model::DCBA::Cache::Redis;
 
-	sub get
+	sub select
 	{
 		my ( $id ) = @_;
 		my ( $s,$data );
@@ -79,7 +79,7 @@
 		return $data->{'id'}->{$id};
 	} 
 		
-	sub set
+	sub insert
 	{
 		my ( $id, $ndata ) = @_;
 
