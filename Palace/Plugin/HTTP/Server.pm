@@ -11,7 +11,8 @@
 
 		given( $self->env()->{'GATEWAY_INTERFACE'} )
 		{
-			when(/CGI/) { return __PACKAGE__.'::FastCGI' }
+##			when(/CGI/) { return __PACKAGE__.'::FastCGI' }
+			when(/CGI/) { return 'FastCGI' }
 		}
 	}
 

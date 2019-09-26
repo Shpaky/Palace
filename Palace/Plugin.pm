@@ -22,9 +22,9 @@
 				when('DB::MYSQL') { $self->{$class}->db_connect('mysql') }
 				when('HTTP::Server')
 				{
-					$self->{$class} = $self->runtime_require($self->{$class}->protocol())->new();						## everytime will invoke 'runtime_require' method
-				##	$self->{$class}->{$self->{$class}->protocol()} ||= $self->runtime_require(__PACKAGE__.'::'.$self->{$class}->protocol())->new();
-				##	return $self->{$class}->{$self->{$class}->protocol()};
+				##	$self->{$class} = $self->runtime_require(__PACKAGE__.'::'.$class.'::'.$self->{$class}->protocol())->new();		## everytime will invoke 'runtime_require' method
+					$self->{$class}->{$self->{$class}->protocol()} ||= $self->runtime_require(__PACKAGE__.'::'.$class.'::'.$self->{$class}->protocol())->new();
+					return $self->{$class}->{$self->{$class}->protocol()};
 				}
 				when('Model')
 				{
